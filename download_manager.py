@@ -147,17 +147,16 @@ class Downloader:
                     continue
                 elif (str(CurrentIndex) not in self.DictForDownloadingSegment) and \
                      (str(CurrentIndex) not in self.ListForFinishedSegment):
-                    while True:
-                        if len(self.DictForRunningThread)<self.ThreadPoolNum+1:
-                            ThreadObj=Thread(target=self.FetchSegment,kwargs={'index':CurrentIndex,
+                    if len(self.DictForRunningThread)<self.ThreadPoolNum+1:
+                        ThreadObj=Thread(target=self.FetchSegment,kwargs={'index':CurrentIndex,
                                                                               'length':self.SegmentLength})
-                            ThreadObj.start()
-                            CurrentIndex=((CurrentIndex+1)%TotalSegment)
-                            sleep(0.1)
-                            break
-                        else:
-                            sleep(2)
+                        ThreadObj.start()
+                        CurrentIndex=((CurrentIndex+1)%TotalSegment)
+                        sleep(0.1)
+                    else:
+                        sleep(2)
             self.FlagOfTerminated=True
+            print ('Total Download bytes '+str(self.TotalByteOfDownloaded))
             print ('Download finished')
         except KeyboardInterrupt:
             print ('Trigger terminated signal.......')
@@ -186,6 +185,7 @@ class Downloader:
                 (str(Speed/BaseKB)+' KB/s' if Speed>=BaseKB and Speed<BaseMB else False) or \
                 (str(Speed/BaseMB)+'MB/s'  if Speed>=BaseMB and Speed<BaseGB else False) or \
                 (str(Speed/BaseGB)+' GB/s')
+            Result=Result+'   '+str(self.TotalByteOfDownloaded)+' @'+str(self.TotalBytes)
             print ('Current download speed is '+Result)
 
             
